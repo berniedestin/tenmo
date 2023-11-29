@@ -6,6 +6,7 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.History;
 import com.techelevator.tenmo.model.User;
+import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpStatus;
@@ -86,10 +87,27 @@ public class TransactionController {
         return transferLog;
     }
 
-    public List<History> listTransferByUser(){
-        
+    @RequestMapping(path = "", method = RequestMethod.GET)
+    public List<History> listTransactionByUser(Principal principal){ //spring knows who i'm talking about it.
+        //call out principal
+
+        int userId = userDao.findIdByUsername(principal.getName());
+
+        //return list of transactions
+        return historyDao.getHistoryByUser(userId);
     }
 
+    //getHistoryById
+    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    public History getTransactionById (@PathVariable int id){
 
+       History history = historyDao.getHistoryById(id);
 
-}
+       if (history == null){
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "TransactionId not found");
+       } else {
+           return history;
+       }
+
+    }
+    }
