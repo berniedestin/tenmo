@@ -11,6 +11,8 @@ public interface AccountDao {
 
     public Account getAccountById(int id);
 
+    public Account getAccountByUserId(int userId);
+
     public Account updateAccount(Account account);
 
     public int deleteAccountById(int id);

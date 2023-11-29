@@ -50,6 +50,24 @@ public class JdbcAccountDao implements AccountDao{
         return account;
     }
 
+    public Account getAccountByUserId(int userId) {
+        Account account = null;
+
+        String sql = "select account_id, user_id, balance \n" +
+                "from account\n" +
+                "WhERE user_id = ?;";
+
+        try{
+            SqlRowSet result = jdbcTemplate.queryForRowSet(sql, userId);
+            if( result.next()){
+                account = mapRowsToAccount(result);
+            }
+        }catch (Exception e){
+            System.out.println("Something went wrong in getAccountByUserId");
+        }
+        return account;
+    }
+
     @Override
     public Account updateAccount(Account account) {
         Account updatedAccount = null;

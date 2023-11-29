@@ -3,10 +3,12 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.model.History;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JdbcHistoryDao implements HistoryDao {
 
     private JdbcTemplate jdbcTemplate;
@@ -18,11 +20,11 @@ public class JdbcHistoryDao implements HistoryDao {
     public History createHistory(History history) {
         History newHistory = null;
 
-        String sql = "INSERT INTO transaction_history(transaction_date, from_id, to_id, amount, status)\n" +
-                "VALUES(?,?,?,?,?) RETURNING transaction_id;";
+        String sql = "INSERT INTO transaction_history(from_id, to_id, amount, status)\n" +
+                "VALUES(?,?,?,?) RETURNING transaction_id;";
 
         try{
-            int newHistoryId = jdbcTemplate.queryForObject(sql,int.class,history.getTransactionDate(),
+            int newHistoryId = jdbcTemplate.queryForObject(sql,int.class,
                     history.getFromId(),history.getToId(), history.getAmount(),history.getStatus());
             newHistory = getHistoryById(newHistoryId);
 

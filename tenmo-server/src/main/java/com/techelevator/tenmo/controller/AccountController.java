@@ -13,8 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.security.PermitAll;
 
-@PermitAll
+
 @RestController
+@PreAuthorize("isAuthenticated()")
 @RequestMapping("/accounts")
 public class AccountController {
     @Autowired
