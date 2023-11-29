@@ -11,6 +11,8 @@ public class Account {
     private int userId;
     private BigDecimal balance;
 
+    public Account(){}
+
     public Account(int accountId, int userId, double balance){
         this.accountId = accountId;
         this.userId = userId;

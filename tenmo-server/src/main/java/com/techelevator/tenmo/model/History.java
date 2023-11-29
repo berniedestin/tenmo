@@ -21,6 +21,7 @@ public class History {
     private BigDecimal amount;
     private String status;
 
+    public History(){}
     public History(int transactionId, LocalDate transactionDate, int fromId, int toId, double amount, String status){
 
         this.transactionId = transactionId;
