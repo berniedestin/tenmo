@@ -1,5 +1,6 @@
 package com.techelevator.tenmo;
 
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AccountService;
@@ -61,6 +62,9 @@ public class App {
         currentUser = authenticationService.login(credentials);
         if (currentUser == null) {
             consoleService.printErrorMessage();
+        } else {
+            accountService.setAuthToken(currentUser.getToken());
+            transactionService.setAuthToken(currentUser.getToken());
         }
     }
 
@@ -89,8 +93,12 @@ public class App {
     }
 
 	private void viewCurrentBalance() {
-		// TODO Auto-generated method stub
-		
+        Account account = accountService.getAccount();
+        if (account != null){
+            System.out.println("Your account balance is: $" + account.getBalance());
+        } else {
+            System.out.println("No balance available");
+        }
 	}
 
 	private void viewTransferHistory() {
