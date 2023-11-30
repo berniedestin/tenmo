@@ -191,6 +191,22 @@ public class TransactionController {
     public History rejectTransferRequest(@PathVariable int requestId, Principal principal){
         // if user is the from Id, let them reject request by transferId
 
+        //Principal
+        int principalId = userDao.findIdByUsername(principal.getName());
+
+        //set variable for transactionID
+        History requestTransfer = historyDao.getHistoryById(requestId);
+
+        //validate that there IS something in the row
+        if (requestTransfer.getFromId() != principalId || !requestTransfer.getStatus().equals("Pending")){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't reject this request");
+        }
+
+        requestTransfer.setStatus("Rejected");
+
+        History rejectedTransfer = historyDao.updateHistory(requestTransfer);
+
+        return rejectedTransfer;
 
     }
 
