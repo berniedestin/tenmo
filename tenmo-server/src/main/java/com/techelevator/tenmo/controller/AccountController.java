@@ -30,6 +30,13 @@ public class AccountController {
         } else {
             return account;
         }
+        //change this to work with the principal instead of the ID
+        //that way you don't pass another person information by id
+
+        // /account  - as long as you are logged in - it will give you your acct info.
+        //GET - good practice to commit more often than you need too
+
+
 
     }
 
