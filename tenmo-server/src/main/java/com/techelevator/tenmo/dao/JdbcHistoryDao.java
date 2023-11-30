@@ -89,8 +89,8 @@ public class JdbcHistoryDao implements HistoryDao {
 
         String sql = "select transaction_id, transaction_date, from_id, to_id, amount, status \n" +
                 "from transaction_history\n" +
-                "WHERE from_id = ?\n" +
-                "OR to_id = ?\n" +
+                "WHERE (from_id = ?\n" +
+                "OR to_id = ?)\n" +
                 "AND status = ?;";
 
         try{
@@ -155,7 +155,9 @@ public class JdbcHistoryDao implements HistoryDao {
     public History mapRowsToHistory(SqlRowSet rowSet){
         History history = new History();
         history.setTransactionId(rowSet.getInt("transaction_id"));
-        history.setTransactionDate(rowSet.getDate("transaction_date").toLocalDate());
+        if(rowSet.getDate("transaction_date") != null) {
+            history.setTransactionDate(rowSet.getDate("transaction_date").toLocalDate());
+        }
         history.setFromId(rowSet.getInt("from_id"));
         history.setToId(rowSet.getInt("to_id"));
         history.setAmount(rowSet.getBigDecimal("amount"));

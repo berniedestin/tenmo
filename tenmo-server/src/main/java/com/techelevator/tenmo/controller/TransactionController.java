@@ -94,7 +94,10 @@ public class TransactionController {
         int userId = userDao.findIdByUsername(principal.getName());
 
         //return list of transactions
-        return historyDao.getHistoryByUser(userId);
+
+        List<History> histories = historyDao.getHistoryByUser(userId);
+
+        return histories;
     }
 
     //getHistoryById
