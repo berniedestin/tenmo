@@ -81,12 +81,4 @@ public class History {
         this.status = status;
     }
 
-    //these may not be necessary
-    //created just in case
-    public double getAmountDouble() {
-        return amount.doubleValue();
-    }
-    public void setAmountDouble(double amount) {
-        this.amount = BigDecimal.valueOf(amount);
-    }
 }

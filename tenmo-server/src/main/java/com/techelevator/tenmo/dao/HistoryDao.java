@@ -11,6 +11,8 @@ public interface HistoryDao {
 
     public List<History> getHistoryByUser(int userId);
 
+    public List<History> getHistoryByPendingAndFromId(int id);
+
     public History updateHistory(History history);
 
     public int deleteHistoryById(int id);

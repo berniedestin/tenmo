@@ -112,18 +112,14 @@ public class TransactionController {
     }
     //add to history dao that will select all where status = pending from the database
 
-    @RequestMapping(path = "/request/{toId}/{amount}", method = RequestMethod.POST)
-    public History requestTransfer (Principal principal, @PathVariable int toId, @PathVariable double amount){
+    @RequestMapping(path = "/request/{fromId}/{amount}", method = RequestMethod.POST)
+    public History requestTransfer (Principal principal, @PathVariable int fromId, @PathVariable double amount){
 
-        int fromUserId = userDao.findIdByUsername(principal.getName());
+        int toUserId = userDao.findIdByUsername(principal.getName());
 
-        if(fromUserId == toId){
+        if(toUserId == fromId){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't send money to yourself");
         }
-
-        //grab account from both
-        Account fromAccount = accountDao.getAccountByUserId(fromUserId);
-        Account toAccount = accountDao.getAccountByUserId(toId);
 
         //can't request a negative amount
         BigDecimal requestAmt = new BigDecimal("0");
@@ -137,8 +133,8 @@ public class TransactionController {
         //A transfer includes the User IDs of the from and to users and the amount of TE Bucks.
 
         History requestHistory = new History();
-        requestHistory.setToId(toId);
-        requestHistory.setFromId(fromUserId);
+        requestHistory.setToId(toUserId);
+        requestHistory.setFromId(fromId);
         requestHistory.setAmount(requestAmt);
         requestHistory.setStatus("Pending");
 
@@ -147,4 +143,61 @@ public class TransactionController {
         return requestTransfer; //will send to database and give you an object back, with ID && Date.
     }
 
+    @RequestMapping(path = "request/pending", method = RequestMethod.GET)
+    public List<History> getPendingTransactionsByFromId(Principal principal){
+        int userId = userDao.findIdByUsername(principal.getName());
+        return historyDao.getHistoryByPendingAndFromId(userId);
     }
+
+    @RequestMapping(path = "request/approve/{requestId}", method = RequestMethod.PUT)
+    public History approveTransferRequest(@PathVariable int requestId, Principal principal){
+        // if user is the fromId, let them approve request by transferId
+        int principalId = userDao.findIdByUsername(principal.getName());
+
+        History requestTransfer = historyDao.getHistoryById(requestId);
+
+        if(requestTransfer == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found");
+        }
+
+        if(requestTransfer.getFromId() != principalId ||
+            !requestTransfer.getStatus().equals("Pending")){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't approve that transaction");
+        }
+
+        Account fromAccount = accountDao.getAccountByUserId(requestTransfer.getFromId());
+        Account toAccount = accountDao.getAccountByUserId(requestTransfer.getToId());
+        BigDecimal amount = requestTransfer.getAmount();
+
+        //Check if transfer amount is greater than account balance
+        if(amount.compareTo(fromAccount.getBalance()) == 1){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account must have transfer amount!");
+        }
+
+        //Update account balances
+        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
+        toAccount.setBalance(toAccount.getBalance().add(amount));
+        accountDao.updateAccount(fromAccount);
+        accountDao.updateAccount(toAccount);
+
+        requestTransfer.setStatus("Approved");
+
+        History approvedTransfer = historyDao.updateHistory(requestTransfer);
+
+        return approvedTransfer;
+    }
+
+    @RequestMapping(path = "request/reject/{requestId}", method = RequestMethod.PUT)
+    public History rejectTransferRequest(@PathVariable int requestId, Principal principal){
+        // if user is the from Id, let them reject request by transferId
+
+
+    }
+
+
+
+
+
+
+
+}

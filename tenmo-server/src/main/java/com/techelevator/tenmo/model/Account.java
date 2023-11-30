@@ -37,12 +37,4 @@ public class Account {
         this.balance = balance;
     }
 
-    //these may not be necessary
-        //created just in case
-    public double getBalanceDouble(){
-        return balance.doubleValue();
-    }
-    public void setBalanceDouble(double balance){
-        this.balance = BigDecimal.valueOf(balance);
-    }
 }

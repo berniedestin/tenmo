@@ -4,6 +4,7 @@ import com.techelevator.tenmo.model.History;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.html.HTMLIsIndexElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,34 @@ public class JdbcHistoryDao implements HistoryDao {
         }
 
         return histories;
+    }
+
+    @Override
+    public List<History> getHistoryByPendingAndFromId(int id){
+        final String PENDING = "Pending";
+
+        List<History> histories = new ArrayList<>();
+
+
+        String sql = "select transaction_id, transaction_date, from_id, to_id, amount, status \n" +
+                "from transaction_history\n" +
+                "WHERE from_id = ?\n" +
+                "OR to_id = ?\n" +
+                "AND status = ?;";
+
+        try{
+
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id, id, PENDING );
+            while (results.next()){
+                histories.add(mapRowsToHistory(results));
+            }
+
+        }catch (Exception e){
+            System.out.println("Something went wrong with getHistoryByStatus");
+        }
+
+        return histories;
+
     }
 
     @Override
