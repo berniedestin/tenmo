@@ -45,7 +45,6 @@ public class TransactionController {
         }
 
         return users;
-
     }
 
     @RequestMapping(path = "/{toUserId}/{amount}", method = RequestMethod.POST)
@@ -58,6 +57,7 @@ public class TransactionController {
         Account toAccount = accountDao.getAccountByUserId(toUserId);
 
         BigDecimal transferAmount = new BigDecimal("0");
+
         if(amount <= 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Amount must be greater than zero!");
         }else {
@@ -110,4 +110,41 @@ public class TransactionController {
        }
 
     }
+    //add to history dao that will select all where status = pending from the database
+
+    @RequestMapping(path = "/request/{toId}/{amount}", method = RequestMethod.POST)
+    public History requestTransfer (Principal principal, @PathVariable int toId, @PathVariable double amount){
+
+        int fromUserId = userDao.findIdByUsername(principal.getName());
+
+        if(fromUserId == toId){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't send money to yourself");
+        }
+
+        //grab account from both
+        Account fromAccount = accountDao.getAccountByUserId(fromUserId);
+        Account toAccount = accountDao.getAccountByUserId(toId);
+
+        //can't request a negative amount
+        BigDecimal requestAmt = new BigDecimal("0");
+
+        if(amount <= 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Amount must be greater than zero");
+        } else {
+            requestAmt = BigDecimal.valueOf(amount);
+        }
+
+        //A transfer includes the User IDs of the from and to users and the amount of TE Bucks.
+
+        History requestHistory = new History();
+        requestHistory.setToId(toId);
+        requestHistory.setFromId(fromUserId);
+        requestHistory.setAmount(requestAmt);
+        requestHistory.setStatus("Pending");
+
+        History requestTransfer =  historyDao.createHistory(requestHistory);
+
+        return requestTransfer; //will send to database and give you an object back, with ID && Date.
+    }
+
     }
