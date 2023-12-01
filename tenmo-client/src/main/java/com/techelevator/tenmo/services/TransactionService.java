@@ -76,6 +76,21 @@ public class TransactionService {
         return transferHistory;
     }
 
+    public History requestMoney(int fromId, BigDecimal amount){
+        History history =  null;
+        String url = baseUrl + "/transaction/request/" + fromId + "/" + amount.doubleValue();
+        try{
+            ResponseEntity<History> response = restTemplate.exchange(url, HttpMethod.POST, makeAuthEntity(), History.class);
+            history = response.getBody();
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            errorSout(e.getMessage());
+        } catch (Exception e){
+            System.out.println("Something went wrong with the transfer");
+        }
+
+        return history;
+    }
+
     private HttpEntity<Void> makeAuthEntity(){
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);

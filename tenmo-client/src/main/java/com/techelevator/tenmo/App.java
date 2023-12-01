@@ -156,8 +156,35 @@ public class App {
 	}
 
 	private void requestBucks() {
-		// TODO Auto-generated method stub
-		
+        int menuSelection = -1;
+        while (true){
+            List<User> users = transactionService.listUsers();
+            int count = 0;
+            for(User user: users){
+                count++;
+                System.out.println( count + ":  User Id #: " + user.getId() +
+                        "  Username: " + user.getUsername());
+            }
+            System.out.println("0:  Cancel");
+            menuSelection = consoleService.promptForMenuSelection("Please select who you would like to request money from: ");
+            if(menuSelection > 0 && menuSelection <= count){
+                int userId = users.get(menuSelection - 1).getId();
+                BigDecimal amount = consoleService.promptForBigDecimal("Please enter an amount to request: ");
+                History transfer = transactionService.requestMoney(userId, amount);
+                if(transfer.getStatus() != null) {
+                    if (transfer.getStatus().equals("Pending")) {
+                        System.out.println("Request is pending");
+                        break;
+                    } else {
+                        System.out.println("Something really went wrong!!!");
+                        break;
+                    }
+                }
+            }else if (menuSelection == 0){
+                break;
+            } else {
+                System.out.println("Please enter a valid number!");
+            }
+        }
 	}
-
 }
