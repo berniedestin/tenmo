@@ -103,8 +103,14 @@ public class App {
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
-		
+    List<History> histories = transactionService.viewTransferHistory();
+        if (histories != null){
+            for (History history : histories){
+                System.out.println(history.toString());
+            }
+        }else {
+            System.out.println("No transfer history found");
+        }
 	}
 
 	private void viewPendingRequests() {

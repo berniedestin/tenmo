@@ -84,6 +84,12 @@ public class History {
         public void setStatus(String status) {
             this.status = status;
         }
+        @Override
+        public String toString(){
+            return "Transaction Id: " + getTransactionId() + " Transaction Date: " +
+                    getTransactionDate() + " From ID: " + getFromId() + " To ID: " + getTransactionDate() +
+                    " Amount: " + getAmount() + " Status: " + getStatus();
+        }
 
     }
 

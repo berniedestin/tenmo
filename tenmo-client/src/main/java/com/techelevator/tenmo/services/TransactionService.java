@@ -11,6 +11,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.sound.midi.Soundbank;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public class TransactionService {
     }
 
     public History transfer(int toUserId, BigDecimal amount){
-        History transaction = new History();
+        History transaction = null;
         String url = baseUrl + "transaction/" + toUserId + "/" + amount.doubleValue();
 
         try{
@@ -60,6 +61,21 @@ public class TransactionService {
         return transaction;
     }
 
+    public List<History> viewTransferHistory(){
+
+        List<History> transferHistory = null;
+
+        String url = baseUrl + "/transaction";
+
+        try {
+            ResponseEntity<History[]> response = restTemplate.exchange(url, HttpMethod.GET, makeAuthEntity(), History[].class);
+            transferHistory = Arrays.asList(response.getBody());
+        }catch (Exception e){
+            System.out.println("Something went wrong with retrieving transfer history");
+        }
+        return transferHistory;
+    }
+
     private HttpEntity<Void> makeAuthEntity(){
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);
@@ -71,4 +87,6 @@ public class TransactionService {
         int indexEnd = errorJsonString.indexOf("\",\"path\":");
         System.out.println(errorJsonString.substring(indexStart, indexEnd));
     }
+
+
 }
