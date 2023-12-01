@@ -33,16 +33,23 @@ public class TransactionController {
     @Autowired
     private UserDao userDao;
 
+//    @RequestMapping(path = "/list_users", method = RequestMethod.GET)
+//    public List<String> listUsers(){
+//        List<String> users = new ArrayList<>();
+//
+//        List<User> doNotUseUsers = userDao.findAll();
+//
+//        for(User user: doNotUseUsers){
+//            String userString = "User ID: " + user.getId() + ", Username: " + user.getUsername();
+//            users.add(userString);
+//        }
+//
+//        return users;
+//    }
+
     @RequestMapping(path = "/list_users", method = RequestMethod.GET)
-    public List<String> listUsers(){
-        List<String> users = new ArrayList<>();
-
-        List<User> doNotUseUsers = userDao.findAll();
-
-        for(User user: doNotUseUsers){
-            String userString = "User ID: " + user.getId() + ", Username: " + user.getUsername();
-            users.add(userString);
-        }
+    public List<User> listUsers(){
+        List<User> users = userDao.findAll();
 
         return users;
     }

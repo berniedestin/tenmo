@@ -3,9 +3,10 @@ package com.techelevator.tenmo.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDate;
 
-    public class History {
+public class History {
         @JsonProperty("transaction_id")
         private int transactionId;
 
@@ -45,9 +46,12 @@ import java.time.LocalDate;
             return transactionDate;
         }
 
-        public void setTransactionDate(LocalDate transactionDate) {
-            this.transactionDate = transactionDate;
+        public void setTransactionDate(Date transactionDate) {
+            this.transactionDate = transactionDate.toLocalDate();
         }
+//        public void setTransactionDate(LocalDate transactionDate) {
+//            this.transactionDate = transactionDate;
+//        }
 
         public int getFromId() {
             return fromId;

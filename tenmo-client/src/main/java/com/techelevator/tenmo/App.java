@@ -1,12 +1,13 @@
 package com.techelevator.tenmo;
 
-import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TransactionService;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class App {
 
@@ -112,7 +113,39 @@ public class App {
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
+        int menuSelection = -1;
+        while (true){
+            List<User> users = transactionService.listUsers();
+            int count = 0;
+            for(User user: users){
+                count++;
+                System.out.println( count + ":  User Id #: " + user.getId() +
+                        "  Username: " + user.getUsername());
+            }
+            System.out.println("0:  Cancel");
+            menuSelection = consoleService.promptForMenuSelection("Please select who you would like to send money to: ");
+            if(menuSelection > 0 && menuSelection <= count){
+                int userId = users.get(menuSelection - 1).getId();
+                BigDecimal amount = consoleService.promptForBigDecimal("Please enter an amount to send: ");
+                History transfer = transactionService.transfer(userId, amount);
+                if(transfer.getStatus() != null) {
+                    if (transfer.getStatus().equals("Approved")) {
+                        System.out.println("Transfer was successful!");
+                        break;
+                    } else {
+                        System.out.println("Transfer was unsuccessful!");
+                        break;
+                    }
+                } 
+
+            }else if (menuSelection == 0){
+                break;
+            } else {
+                System.out.println("Please enter a valid number!");
+            }
+
+        }
+
 		
 	}
 
