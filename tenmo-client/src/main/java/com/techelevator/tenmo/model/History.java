@@ -87,7 +87,7 @@ public class History {
         @Override
         public String toString(){
             return "Transaction Id: " + getTransactionId() + " Transaction Date: " +
-                    getTransactionDate() + " From ID: " + getFromId() + " To ID: " + getTransactionDate() +
+                    getTransactionDate() + " From ID: " + getFromId() + " To ID: " + getToId() +
                     " Amount: " + getAmount() + " Status: " + getStatus();
         }
 

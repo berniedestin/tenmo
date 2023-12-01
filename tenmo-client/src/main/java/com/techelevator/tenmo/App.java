@@ -114,9 +114,70 @@ public class App {
 	}
 
 	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
+        int menuSelection = -1;
+        while (true){
+            List<History> pendingTransactions = transactionService.viewPendingTransactions();
+            if(pendingTransactions.size() == 0){
+                System.out.println("You have no pending transactions.");
+                break;
+            }
+            int count = 0;
+            for(History history: pendingTransactions){
+                count++;
+                System.out.println( count + ":  " + history.toString());
+            }
+            System.out.println("0:  Cancel");
+            menuSelection = consoleService.promptForMenuSelection("Please select which transaction you would like to approve or reject: ");
+            if(menuSelection > 0 && menuSelection <= count){
+                int transactionId = pendingTransactions.get(menuSelection - 1).getTransactionId();
+                History request = approveOrReject(transactionId);
+                if(request != null) {
+                    if (request.getStatus().equals("Approved")) {
+                        System.out.println("Request was approved!");
+                        break;
+                    } else if(request.getStatus().equals("Rejected")){
+                        System.out.println("Request was rejected");
+                        break;
+                    } else {
+                        System.out.println("Transfer was unsuccessful!");
+                        break;
+                    }
+                }
+
+            }else if (menuSelection == 0){
+                break;
+            } else {
+                System.out.println("Please enter a valid number!");
+            }
+
+        }
 		
 	}
+
+    private History approveOrReject(int transactionId){
+        History request = null;
+
+        int menuSelection = -1;
+        while (true){
+            System.out.println("1:  Approve");
+            System.out.println("2:  Reject");
+            System.out.println("0:  Exit");
+            menuSelection = consoleService.promptForMenuSelection("Please select whether to approve or reject request: ");
+            if(menuSelection == 1){
+                request = transactionService.approveRequest(transactionId);
+                break;
+            } else if( menuSelection  == 2){
+                request = transactionService.rejectRequest(transactionId);
+                break;
+            }else if (menuSelection == 0){
+                break;
+            }else{
+                System.out.println("Please enter a valid number!");
+            }
+        }
+
+        return request;
+    }
 
 	private void sendBucks() {
         int menuSelection = -1;

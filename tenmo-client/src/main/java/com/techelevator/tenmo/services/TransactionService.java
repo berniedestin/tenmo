@@ -76,6 +76,25 @@ public class TransactionService {
         return transferHistory;
     }
 
+    public List<History> viewPendingTransactions(){
+        List<History> pendingHistory = null;
+
+        String url = baseUrl + "/transaction/request/pending";
+
+        try{
+
+            ResponseEntity<History[]> response = restTemplate.exchange(url, HttpMethod.GET, makeAuthEntity(), History[].class);
+
+            pendingHistory = Arrays.asList(response.getBody());
+
+        }catch (Exception e){
+            System.out.println("Something went wrong viewing pending transactions");
+        }
+
+        return pendingHistory;
+    }
+
+
     public History requestMoney(int fromId, BigDecimal amount){
         History history =  null;
         String url = baseUrl + "/transaction/request/" + fromId + "/" + amount.doubleValue();
@@ -90,6 +109,45 @@ public class TransactionService {
 
         return history;
     }
+
+    public History approveRequest(int transactionId){
+        History approvedRequest = null;
+
+        String url = baseUrl + "/transaction/request/approve/" + transactionId;
+
+        try{
+
+            ResponseEntity<History> response = restTemplate.exchange(url, HttpMethod.PUT, makeAuthEntity(), History.class);
+            approvedRequest = response.getBody();
+
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            errorSout(e.getMessage());
+        } catch (Exception e){
+            System.out.println("Something went wrong with the approval");
+        }
+
+        return approvedRequest;
+    }
+
+    public History rejectRequest(int transactionId){
+        History rejectRequest = null;
+
+        String url = baseUrl + "/transaction/request/reject/" + transactionId;
+
+        try{
+            ResponseEntity<History> response = restTemplate.exchange(url, HttpMethod.PUT, makeAuthEntity(), History.class);
+            rejectRequest = response.getBody();
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            errorSout(e.getMessage());
+        } catch (Exception e){
+            System.out.println("Something went wrong with the rejection");
+        }
+
+        return rejectRequest;
+    }
+
+
+
 
     private HttpEntity<Void> makeAuthEntity(){
         HttpHeaders headers = new HttpHeaders();
