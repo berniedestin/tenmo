@@ -195,7 +195,7 @@ public class App {
                 int userId = users.get(menuSelection - 1).getId();
                 BigDecimal amount = consoleService.promptForBigDecimal("Please enter an amount to send: ");
                 History transfer = transactionService.transfer(userId, amount);
-                if(transfer.getStatus() != null) {
+                if(transfer != null) {
                     if (transfer.getStatus().equals("Approved")) {
                         System.out.println("Transfer was successful!");
                         break;
