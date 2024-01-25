@@ -74,7 +74,7 @@ Stores the login information for users of the system.
 
 ### `account` table
 
-Stores the accounts of users in the system.
+Stores the accounts of users in the system..
 
 | Field           | Description                                                        |
 | --------------- | ------------------------------------------------------------------ |
